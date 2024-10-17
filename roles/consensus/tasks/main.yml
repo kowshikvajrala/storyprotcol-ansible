@@ -1,0 +1,62 @@
+---
+- name: Set a variable
+  ansible.builtin.set_fact:
+    consensus_extracted_binary_dir_name: story-linux-amd64-{{ storyprotocol.validator.consensus.version }}
+
+- name: Include user creation task
+  ansible.builtin.include_tasks: tasks/create_user_and_directories.yml
+  vars:
+    home: "{{ consensus_home_dir }}"
+    directories: "{{ consensus_directories }}"
+    log_file_path: "{{ consensus_log_file_path }}"
+
+- name: Download and unarchive the binary
+  ansible.builtin.unarchive:
+    src: "{{ storyprotocol.validator.consensus.source_url }}/{{ consensus_extracted_binary_dir_name }}.{{ storyprotocol.validator.consensus.file_extension }}"
+    dest: "{{ tmp_dir }}"
+    remote_src: true
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy the binary file
+  ansible.builtin.copy:
+    src: "{{ tmp_dir }}/{{ consensus_extracted_binary_dir_name }}/{{ consensus_default_binary_name }}"
+    dest: "{{ consensus_bin_dir }}/{{ service_identifier }}"
+    remote_src: true
+    owner: root
+    group: root
+    force: true
+    mode: "0755"
+
+- name: Clean up the temporary files in /tmp
+  ansible.builtin.file:
+    path: "{{ tmp_dir }}/{{ consensus_extracted_binary_dir_name }}"
+    state: absent
+
+- name: Fetch secrets from HCP Vault and save to files
+  block:
+    - name: Fetch jwtsecret and save
+      ansible.builtin.include_tasks: tasks/get_and_save_vault_secret.yml
+      vars:
+        vault_secret_source_path: "{{ project }}/{{ org }}/{{ type }}/{{ consensus_jwtsecret_file_name }}"
+        secret_destination_path: "{{ consensus_jwtsecret_path }}"
+        secret_type: key
+
+- name: Initialize the consensus client
+  ansible.builtin.command: >
+    {{ consensus_bin_dir }}/{{ service_identifier }} init
+    --network {{ storyprotocol.validator.consensus.chain_id }}
+    --home {{ consensus_home_dir }} --moniker {{ storyprotocol.validator.consensus.moniker_name }}
+  changed_when: false
+
+- name: Copy consensus client systemd service file
+  ansible.builtin.template:
+    src: "{{ env }}/storyprotocol-consensus.service.j2"
+    dest: /etc/systemd/system/{{ service_identifier }}.service
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload service
+    - Restart service

@@ -1,0 +1,3 @@
+---
+consensus_jwtsecret_file_name: jwtsecret
+consensus_default_binary_name: story
