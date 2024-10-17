@@ -1,14 +1,13 @@
 ---
-# maintains testnet inventory grouped by project names
 all:
   vars:
     env: testnet
   children:
-    sui:
+    storyprotocol:
       hosts:
-        bridge.sui.mainnet.encapsulate.xyz:
+        bridge.storyprotocol.mainnet.encapsulate.xyz:
           type: bridge
-        validator.sui.mainnet.encapsulate.xyz:
+        validator.storyprotocol.mainnet.encapsulate.xyz:
           type: validator
-        fullnode.sui.mainnet.encapsulate.xyz:
+        fullnode.storyprotocol.mainnet.encapsulate.xyz:
           type: fullnode

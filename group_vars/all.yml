@@ -1,26 +1,27 @@
 ---
-# maintains ports, bianry or repo urls
-
 org: encapsulate
 
 default_node_types:
   - validator
   - default
 
-sui:
+tmp_dir: /tmp
+
+storyprotocol:
   validator:
-    source_url: https://releases.sui.io
-    ports:
-      server_listen_port: 9191
-      metrics_port: 9186
-  fullnode:
-    version: 88888888888
-    source_url: https://releases.sui.io
-    ports:
-      server_listen_port: 9191
-      metrics_port: 9186
-  bridge:
-    source_url: https://releases.sui.io
-    ports:
-      server_listen_port: 9191
-      metrics_port: 9186
+    execution:
+      chain_id: iliad
+      syncmode: full
+      source_url: https://story-geth-binaries.s3.us-west-1.amazonaws.com/geth-public
+      ports:
+        auth_rpc_port: 8551
+        p2p_port: 30304
+      file_extension: tar.gz
+    consensus:
+      chain_id: iliad
+      source_url: https://story-geth-binaries.s3.us-west-1.amazonaws.com/story-public
+      ports:
+        p2p_port: 26656
+        rpc_port: 26657
+      file_extension: tar.gz
+      moniker_name: "{{ org }}-{{ project }}-{{ env }}"

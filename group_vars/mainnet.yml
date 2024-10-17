@@ -1,9 +1,7 @@
 ---
-# maintains versions and can overwrite all.yml
-sui:
+storyprotocol:
   validator:
-    version: c9ae0f9282a0643544db27409e07d3ac5dd09105
-  fullnode:
-    version: c9ae0f9282a0643544db27409e07d3ac5dd09105
-  bridge:
-    version: 08a4ef986fdf44a2233f010c5e3764ae888c54a2
+    execution:
+      version: 0.9.2-ea9f0d2
+    consensus:
+      version: 0.9.13-b4c7db1
