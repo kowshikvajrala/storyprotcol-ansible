@@ -2,7 +2,8 @@
 - name: Set project and service identifier in facts
   ansible.builtin.set_fact:
     project: "{{ group_names[0] }}"
-    service_identifier: "{{ group_names[0] }}{{ '' if type in default_node_types else '-' + type }}"
+    service_identifier: >-
+      {{ group_names[0] }}{{ '-' + client if type in default_node_types and client is defined else '-' + type + ('-' + client if client is defined else '') }}
 
 - name: Display environment being deployed to
   ansible.builtin.debug:
@@ -12,7 +13,7 @@
       - "Project: {{ project }}"
       - "Environment: {{ env }}"
       - "Type: {{ type }}"
-      - "Version: {{ vars[project][type].version }}"
+      - "Version: {{ vars[project][type]['execution' if client == 'execution' else 'consensus'].version }}"
       - "Username: {{ service_identifier }}"
       - "Service Name: {{ service_identifier }}"
 
