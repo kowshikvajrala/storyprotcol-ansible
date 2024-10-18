@@ -7,21 +7,35 @@ default_node_types:
 
 tmp_dir: /tmp
 
+go:
+  root: /usr/local/go
+  path: "{{ tmp_dir }}/go"
+  module111: "on"
+
 storyprotocol:
   validator:
     execution:
       chain_id: iliad
       syncmode: full
-      source_url: https://story-geth-binaries.s3.us-west-1.amazonaws.com/geth-public
+      source_url: https://github.com/piplabs/story-geth
       ports:
         auth_rpc_port: 8551
-        p2p_port: 30304
+        p2p_port: 30303
       file_extension: tar.gz
     consensus:
       chain_id: iliad
-      source_url: https://story-geth-binaries.s3.us-west-1.amazonaws.com/story-public
+      source_url: https://github.com/piplabs/story
       ports:
-        p2p_port: 26656
-        rpc_port: 26657
+        prefix: 100
+        suffix:
+          # Used for both p2p_laddr and p2p_external_address
+          p2p: 56
+          rpc: 57
+          abci: 58
+          prometheus: 60
+          pprof: 61
+          rest_api: 17
+          rosetta: 80
+          grpc: 90
+          grpc_web: 91
       file_extension: tar.gz
-      moniker_name: "{{ org }}-{{ project }}-{{ env }}"
