@@ -4,12 +4,9 @@ Description=Story execution
 [Service]
 User={{ service_identifier }}
 Group={{ service_identifier }}
+EnvironmentFile={{ execution_env_dir }}/normal_env_var
 WorkingDirectory={{ execution_data_dir }}
-ExecStart={{ execution_bin_dir }}/{{ service_identifier }} --{{ storyprotocol.validator.execution.chain_id }} \
-            --syncmode {{ storyprotocol.validator.execution.syncmode }} --datadir {{ execution_data_dir }} \
-            --authrpc.jwtsecret {{ execution_jwtsecret_path }}
-            --authrpc.port {{ storyprotocol.validator.execution.ports.auth_rpc_port }} \
-            --port {{ storyprotocol.validator.execution.ports.p2p_port }}
+ExecStart={{ execution_bin_dir }}/{{ service_identifier }} --{{ vars[project][type][client].chain_id }}
 Restart=always
 RestartSec=4
 LimitNOFILE=65536

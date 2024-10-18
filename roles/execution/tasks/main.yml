@@ -1,8 +1,4 @@
 ---
-- name: Set a variable
-  ansible.builtin.set_fact:
-    execution_extracted_binary_dir_name: geth-linux-amd64-{{ storyprotocol.validator.execution.version }}
-
 - name: Include user creation task
   ansible.builtin.include_tasks: tasks/create_user_and_directories.yml
   vars:
@@ -10,29 +6,8 @@
     directories: "{{ execution_directories }}"
     log_file_path: "{{ execution_log_file_path }}"
 
-- name: Download and unarchive the binary
-  ansible.builtin.unarchive:
-    src: "{{ storyprotocol.validator.execution.source_url }}/{{ execution_extracted_binary_dir_name }}.{{ storyprotocol.validator.execution.file_extension }}"
-    dest: "{{ tmp_dir }}"
-    remote_src: true
-    owner: root
-    group: root
-    mode: "0755"
-
-- name: Copy the binary file
-  ansible.builtin.copy:
-    src: "{{ tmp_dir }}/{{ execution_extracted_binary_dir_name }}/{{ execution_default_binary_name }}"
-    dest: "{{ execution_bin_dir }}/{{ service_identifier }}"
-    remote_src: true
-    owner: root
-    group: root
-    force: true
-    mode: "0755"
-
-- name: Clean up the temporary files in /tmp
-  ansible.builtin.file:
-    path: "{{ tmp_dir }}/{{ execution_extracted_binary_dir_name }}"
-    state: absent
+- name: Include build binary task
+  ansible.builtin.include_tasks: build_binary.yml
 
 - name: Fetch secrets from HCP Vault and save to files
   block:
@@ -42,6 +17,14 @@
         vault_secret_source_path: "{{ project }}/{{ org }}/{{ type }}/{{ execution_jwtsecret_file_name }}"
         secret_destination_path: "{{ execution_jwtsecret_path }}"
         secret_type: key
+
+- name: Copy env file
+  ansible.builtin.template:
+    src: "{{ env }}/normal_env_var"
+    dest: "{{ execution_env_dir }}"
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Copy execution client systemd service file
   ansible.builtin.template:

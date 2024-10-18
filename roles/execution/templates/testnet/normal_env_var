@@ -1,0 +1,5 @@
+GETH_DATADIR={{ execution_data_dir }}
+GETH_SYNCMODE={{ vars[project][type][client].syncmode }}
+GETH_PORT= {{ vars[project][type][client].ports.p2p_port }}
+GETH_AUTHRPC_PORT={{ vars[project][type][client].ports.auth_rpc_port }}
+GETH_AUTHRPC_JWTSECRET={{ execution_jwtsecret_path }}
