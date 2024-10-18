@@ -12,7 +12,7 @@
     version: "{{ vars[project][type][client].version }}"
     force: true
 
-- name: Build the project using `make build`
+- name: Build the project using `go build`
   ansible.builtin.command: go build -o story ./client
   args:
     chdir: "{{ tmp_dir }}/{{ project }}"
@@ -21,6 +21,7 @@
     GOROOT: "{{ go.root }}"
     GOPATH: "{{ go.path }}"
     GO111MODULE: "{{ go.module111 }}"
+  changed_when: false
 
 - name: Find the built binary
   ansible.builtin.find:

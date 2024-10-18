@@ -2,10 +2,10 @@
 storyprotocol:
   validator:
     execution:
-      version: v0.9.2
+      version: v0.9.3
       go:
         version: 1.21.6
     consensus:
-      version: v0.9.13
+      version: v0.11.0
       go:
         version: 1.22.8
