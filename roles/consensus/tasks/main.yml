@@ -1,8 +1,4 @@
 ---
-- name: Set a variable
-  ansible.builtin.set_fact:
-    consensus_extracted_binary_dir_name: story-linux-amd64-{{ storyprotocol.validator.consensus.version }}
-
 - name: Include user creation task
   ansible.builtin.include_tasks: tasks/create_user_and_directories.yml
   vars:
@@ -10,31 +6,59 @@
     directories: "{{ consensus_directories }}"
     log_file_path: "{{ consensus_log_file_path }}"
 
-- name: Download and unarchive the binary
-  ansible.builtin.unarchive:
-    src: "{{ storyprotocol.validator.consensus.source_url }}/{{ consensus_extracted_binary_dir_name }}.{{ storyprotocol.validator.consensus.file_extension }}"
-    dest: "{{ tmp_dir }}"
-    remote_src: true
-    owner: root
-    group: root
-    mode: "0755"
+- name: Include build binary task
+  ansible.builtin.include_tasks: build_binary.yml
 
-- name: Copy the binary file
-  ansible.builtin.copy:
-    src: "{{ tmp_dir }}/{{ consensus_extracted_binary_dir_name }}/{{ consensus_default_binary_name }}"
-    dest: "{{ consensus_bin_dir }}/{{ service_identifier }}"
-    remote_src: true
-    owner: root
-    group: root
-    force: true
-    mode: "0755"
+- name: Get genesis and configuration files
+  block:
+    - name: Copy configuration file
+      ansible.builtin.template:
+        src: "{{ env }}/config.toml.j2"
+        dest: "{{ consensus_config_file_path }}"
+        owner: "{{ service_identifier }}"
+        group: "{{ service_identifier }}"
+        mode: "0644"
+      notify:
+        - Restart service
 
-- name: Clean up the temporary files in /tmp
-  ansible.builtin.file:
-    path: "{{ tmp_dir }}/{{ consensus_extracted_binary_dir_name }}"
-    state: absent
+    - name: Copy story file
+      ansible.builtin.template:
+        src: "{{ env }}/story.toml.j2"
+        dest: "{{ consensus_story_file_path }}"
+        owner: "{{ service_identifier }}"
+        group: "{{ service_identifier }}"
+        mode: "0644"
+      notify:
+        - Restart service
+
+    - name: Copy genesis file
+      ansible.builtin.copy:
+        src: "{{ env }}/genesis.json"
+        dest: "{{ consensus_config_dir }}"
+        owner: "{{ service_identifier }}"
+        group: "{{ service_identifier }}"
+        mode: "0644"
+      notify:
+        - Restart service
 
 - name: Fetch secrets from HCP Vault and save to files
+  when: type == 'validator'
+  block:
+    - name: Fetch priv validator key and save
+      ansible.builtin.include_tasks: tasks/get_and_save_vault_secret.yml
+      vars:
+        vault_secret_source_path: "{{ project }}/{{ org }}/{{ type }}/{{ node_priv_validator_key_file_name }}"
+        secret_destination_path: "{{ node_priv_validator_key_path }}"
+        secret_type: key
+
+    - name: Fetch node key and save
+      ansible.builtin.include_tasks: tasks/get_and_save_vault_secret.yml
+      vars:
+        vault_secret_source_path: "{{ project }}/{{ org }}/{{ type }}/{{ node_node_key_file_name }}"
+        secret_destination_path: "{{ node_node_key_path }}"
+        secret_type: key
+
+- name: Fetch jwtsecret from HCP Vault and save to files
   block:
     - name: Fetch jwtsecret and save
       ansible.builtin.include_tasks: tasks/get_and_save_vault_secret.yml
@@ -42,13 +66,6 @@
         vault_secret_source_path: "{{ project }}/{{ org }}/{{ type }}/{{ consensus_jwtsecret_file_name }}"
         secret_destination_path: "{{ consensus_jwtsecret_path }}"
         secret_type: key
-
-- name: Initialize the consensus client
-  ansible.builtin.command: >
-    {{ consensus_bin_dir }}/{{ service_identifier }} init
-    --network {{ storyprotocol.validator.consensus.chain_id }}
-    --home {{ consensus_home_dir }} --moniker {{ storyprotocol.validator.consensus.moniker_name }}
-  changed_when: false
 
 - name: Copy consensus client systemd service file
   ansible.builtin.template:

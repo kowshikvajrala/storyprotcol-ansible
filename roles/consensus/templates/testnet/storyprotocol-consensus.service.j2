@@ -4,9 +4,8 @@ Description=Storyconsensus
 [Service]
 User={{ service_identifier }}
 Group={{ service_identifier }}
-WorkingDirectory={{consensus_home_dir }}
-ExecStart={{consensus_bin_dir }}/{{ service_identifier }} run --home {{ consensus_home_dir }} \
-          --engine-jwt-file {{ consensus_jwtsecret_path }}
+WorkingDirectory={{ consensus_home_dir }}
+ExecStart={{consensus_bin_dir }}/{{ service_identifier }} run --home {{ consensus_home_dir }}
 Restart=always
 RestartSec=4
 LimitNOFILE=65536
