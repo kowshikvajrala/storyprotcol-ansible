@@ -1,6 +1,8 @@
 GETH_DATADIR={{ execution_data_dir }}
 GETH_SYNCMODE={{ execution_syncmode }}
 GETH_METRICS=true
+GETH_HTTP=true
+GETH_HTTP_PORT={{ vars[project][type][client].ports.http_port }}
 GETH_PORT={{ vars[project][type][client].ports.p2p_port }}
 GETH_DISCOVERY_PORT={{ vars[project][type][client].ports.network_discovery_port }}
 GETH_METRICS_PORT={{ vars[project][type][client].ports.metrics_port }}
