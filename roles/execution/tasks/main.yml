@@ -9,19 +9,18 @@
 - name: Include build binary task
   ansible.builtin.include_tasks: build_binary.yml
 
-- name: Fetch secrets from HCP Vault and save to files
-  block:
-    - name: Fetch jwtsecret and save
-      ansible.builtin.include_tasks: tasks/get_and_save_vault_secret.yml
-      vars:
-        vault_secret_source_path: "{{ project }}/{{ org }}/{{ type }}/{{ execution_jwtsecret_file_name }}"
-        secret_destination_path: "{{ execution_jwtsecret_path }}"
-        secret_type: key
+- name: Save jwtsecret
+  ansible.builtin.copy:
+    content: "{{ vault.storyprotocol[env].jwtsecret }}"
+    dest: "{{ execution_jwtsecret_path }}"
+    owner: "{{ service_identifier }}"
+    group: "{{ service_identifier }}"
+    mode: "0644"
 
 - name: Copy env file
   ansible.builtin.template:
     src: "{{ env }}/normal_env_var"
-    dest: "{{ execution_env_dir }}"
+    dest: "{{ execution_env_dir }}/{{ service_identifier }}.env"
     owner: root
     group: root
     mode: "0644"
