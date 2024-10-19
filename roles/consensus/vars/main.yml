@@ -8,4 +8,4 @@ consensus_genesis_file_name: genesis.json
 consensus_chain_id: iliad
 consensus_jwtsecret_file_name: jwtsecret
 consensus_default_binary_name: story
-consensus_execution_engine_api_endpoint: http://localhost:{{ storyprotocol.execution.ports.auth_rpc_port }}
+consensus_execution_engine_api_endpoint: http://localhost:{{ vars[project][type].execution.ports.auth_rpc_port }}
