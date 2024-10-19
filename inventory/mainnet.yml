@@ -5,8 +5,6 @@ all:
   children:
     storyprotocol:
       hosts:
-        bridge.storyprotocol.mainnet.encapsulate.xyz:
-          type: bridge
         validator.storyprotocol.mainnet.encapsulate.xyz:
           type: validator
         fullnode.storyprotocol.mainnet.encapsulate.xyz:
