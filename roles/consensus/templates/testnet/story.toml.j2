@@ -6,14 +6,14 @@
 version = "v0.9.13"
 
 # Story network to participate in: mainnet, testnet, or devnet.
-network = "iliad"
+network = "{{ consensus_chain_id }}"
 
 #######################################################################
 ###                          Story Options                          ###
 #######################################################################
 
 # Story execution client Engine API http endpoint.
-engine-endpoint = "http://localhost:{{ vars[project][type].execution.ports.auth_rpc_port }}"
+engine-endpoint = "{{ consensus_execution_engine_api_endpoint }}"
 
 # Story execution client JWT file used for authentication.
 engine-jwt-file = "{{ consensus_jwtsecret_path }}"
