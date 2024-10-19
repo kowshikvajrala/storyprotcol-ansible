@@ -1,5 +1,5 @@
 [Unit]
-Description=Storyconsensus
+Description= {{ service_identifier }} layer client
 
 [Service]
 User={{ service_identifier }}
@@ -9,6 +9,7 @@ ExecStart={{consensus_bin_dir }}/{{ service_identifier }} run --home {{ consensu
 Restart=always
 RestartSec=4
 LimitNOFILE=65536
+MemoryLimit=64G
 StandardOutput=append:{{consensus_log_file_path }}
 StandardError=inherit
 
