@@ -1,5 +1,7 @@
 ---
-execution_jwtsecret_file_name: jwtsecret
+execution_jwt_secret_file_name: jwtsecret
 execution_default_binary_name: geth
-execution_chain_id: iliad
+execution_chain_id: 
+  mainnet:
+  testnet: iliad
 execution_syncmode: full

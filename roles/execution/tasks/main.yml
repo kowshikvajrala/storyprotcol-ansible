@@ -11,7 +11,7 @@
 
 - name: Save jwtsecret
   ansible.builtin.template:
-    src: "{{ env }}/jwtsecret.j2"
+    src: "jwt_secret.j2"
     dest: "{{ execution_jwtsecret_path }}"
     owner: "{{ service_identifier }}"
     group: "{{ service_identifier }}"
@@ -19,7 +19,7 @@
 
 - name: Copy env file
   ansible.builtin.template:
-    src: "{{ env }}/normal_env_var"
+    src: "{{ env }}/general.env.j2"
     dest: "{{ execution_env_dir }}/{{ service_identifier }}.env"
     owner: root
     group: root
@@ -27,7 +27,7 @@
 
 - name: Copy execution client systemd service file
   ansible.builtin.template:
-    src: "{{ env }}/storyprotocol-execution.service.j2"
+    src: "{{ env }}/storyprotocol_execution.service.j2"
     dest: /etc/systemd/system/{{ service_identifier }}.service
     owner: root
     group: root
