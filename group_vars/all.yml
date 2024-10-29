@@ -20,8 +20,8 @@ storyprotocol:
       ports:
         suffix:
           auth_rpc: 51
-          p2p: 03
-          network_discovery: 03
+          p2p: 30
+          network_discovery: 30
           metrics: 62
           http: 45
     consensus:

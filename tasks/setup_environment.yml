@@ -44,7 +44,7 @@
   when: client == "consensus"
 
 - name: Set all port variables dynamically for execution client
-  ansible.builtin.set_fact:    
+  ansible.builtin.set_fact:
     execution_auth_rpc_port: "{{ vars[project][type].port_prefix ~ vars[project][type][client].ports.suffix.auth_rpc }}"
     execution_p2p_port: "{{ vars[project][type].port_prefix ~ vars[project][type][client].ports.suffix.p2p }}"
     execution_network_discovery_port: "{{ vars[project][type].port_prefix ~ vars[project][type][client].ports.suffix.network_discovery }}"
@@ -52,7 +52,7 @@
     execution_http_port: "{{ vars[project][type].port_prefix ~ vars[project][type][client].ports.suffix.http }}"
   when: client == "execution"
 
-- name: Display all port variables
+- name: Display all consensus client port variables
   ansible.builtin.debug:
     msg:
       - "P2P Port: {{ p2p_port }}"
@@ -65,6 +65,16 @@
       - "gRPC Port: {{ grpc_port }}"
       - "gRPC-Web Port: {{ grpc_web_port }}"
   when: client == "consensus"
+
+- name: Display all execution client port variables
+  ansible.builtin.debug:
+    msg:
+      - "P2P Port: {{ execution_p2p_port }}"
+      - "AUTH RPC Port: {{ execution_auth_rpc_port }}"
+      - "Network Discovery Port: {{ execution_network_discovery_port }}"
+      - "Metrics Port: {{ execution_metrics_port }}"
+      - "HTTP Port: {{ execution_http_port }}"
+  when: client == "execution"
 
 - name: Confirm deployment details
   ansible.builtin.pause:
