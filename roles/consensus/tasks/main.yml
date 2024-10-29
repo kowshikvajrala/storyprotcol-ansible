@@ -60,15 +60,15 @@
 
 - name: Save jwtsecret
   ansible.builtin.template:
-    src: "{{ env }}/jwtsecret.j2"
-    dest: "{{ consensus_jwtsecret_path }}"
+    src: "jwt_secret.j2"
+    dest: "{{ consensus_jwt_secret_path }}"
     owner: "{{ service_identifier }}"
     group: "{{ service_identifier }}"
     mode: "0644"
 
 - name: Copy consensus client systemd service file
   ansible.builtin.template:
-    src: "{{ env }}/storyprotocol-consensus.service.j2"
+    src: "{{ env }}/storyprotocol_consensus.service.j2"
     dest: /etc/systemd/system/{{ service_identifier }}.service
     owner: root
     group: root
