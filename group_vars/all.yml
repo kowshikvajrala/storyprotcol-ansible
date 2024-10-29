@@ -14,18 +14,19 @@ go:
 
 storyprotocol:
   validator:
+    port_prefix: 100
     execution:
       source_url: https://github.com/piplabs/story-geth
       ports:
-        auth_rpc_port: 8551
-        p2p_port: 30303
-        network_discovery_port: 30303
-        metrics_port: 6060
-        http_port: 8545
+        suffix:
+          auth_rpc: 51
+          p2p: 03
+          network_discovery: 03
+          metrics: 62
+          http: 45
     consensus:
       source_url: https://github.com/piplabs/story
       ports:
-        prefix: 100
         suffix:
           # Used for both p2p_laddr and p2p_external_address
           p2p: 56
