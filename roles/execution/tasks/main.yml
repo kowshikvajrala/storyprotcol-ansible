@@ -12,7 +12,7 @@
 - name: Save jwtsecret
   ansible.builtin.template:
     src: jwt_secret.j2
-    dest: "{{ execution_jwtsecret_path }}"
+    dest: "{{ execution_jwt_secret_path }}"
     owner: "{{ service_identifier }}"
     group: "{{ service_identifier }}"
     mode: "0644"

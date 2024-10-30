@@ -8,13 +8,13 @@
 - name: Clone the repository to /tmp
   ansible.builtin.git:
     repo: "{{ vars[project][type][client].source_url }}"
-    dest: "{{ tmp_dir }}/{{ project }}"
+    dest: "{{ tmp_dir }}/{{ service_identifier }}"
     version: "{{ vars[project][type][client].version }}"
     force: true
 
 - name: Build the project using `make geth`
   community.general.make:
-    chdir: "{{ tmp_dir }}/{{ project }}"
+    chdir: "{{ tmp_dir }}/{{ service_identifier }}"
     target: geth
   environment:
     PATH: "{{ go.root }}/bin:{{ ansible_env.PATH }}"
@@ -24,7 +24,7 @@
 
 - name: Copy the built binary to the target directory
   vars:
-    binary_location: "{{ tmp_dir }}/{{ project }}/build/bin/{{ execution_default_binary_name }}"
+    binary_location: "{{ tmp_dir }}/{{ service_identifier }}/build/bin/{{ execution_default_binary_name }}"
   ansible.builtin.copy:
     src: "{{ binary_location }}"
     dest: "{{ execution_bin_dir }}/{{ service_identifier }}"
@@ -35,5 +35,5 @@
 
 - name: Clean up the temporary repository directory
   ansible.builtin.file:
-    path: "{{ tmp_dir }}/{{ project }}"
+    path: "{{ tmp_dir }}/{{ service_identifier }}"
     state: absent

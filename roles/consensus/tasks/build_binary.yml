@@ -8,14 +8,14 @@
 - name: Clone the repository to /tmp
   ansible.builtin.git:
     repo: "{{ vars[project][type][client].source_url }}"
-    dest: "{{ tmp_dir }}/{{ project }}"
+    dest: "{{ tmp_dir }}/{{ service_identifier }}"
     version: "{{ vars[project][type][client].version }}"
     force: true
 
 - name: Build the project using `go build`
   ansible.builtin.command: go build -o story ./client
   args:
-    chdir: "{{ tmp_dir }}/{{ project }}"
+    chdir: "{{ tmp_dir }}/{{ service_identifier }}"
   environment:
     PATH: "{{ go.root }}/bin:{{ ansible_env.PATH }}"
     GOROOT: "{{ go.root }}"
@@ -25,7 +25,7 @@
 
 - name: Find the built binary
   ansible.builtin.find:
-    paths: "{{ tmp_dir }}/{{ project }}"
+    paths: "{{ tmp_dir }}/{{ service_identifier }}"
     patterns: "{{ consensus_default_binary_name }}"
     recurse: true
   register: binary_location
@@ -41,5 +41,5 @@
 
 - name: Clean up the temporary repository directory
   ansible.builtin.file:
-    path: "{{ tmp_dir }}/{{ project }}"
+    path: "{{ tmp_dir }}/{{ service_identifier }}"
     state: absent

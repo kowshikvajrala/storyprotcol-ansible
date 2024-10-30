@@ -16,7 +16,7 @@ network = "{{ consensus_chain_id.testnet }}"
 engine-endpoint = "{{ consensus_execution_engine_api_endpoint }}"
 
 # Story execution client JWT file used for authentication.
-engine-jwt-file = "{{ consensus_jwtsecret_path }}"
+engine-jwt-file = "{{ consensus_jwt_secret_path }}"
 
 # SnapshotInterval specifies the height interval at which story
 # will take state sync snapshots. Defaults to 1000 (roughly once an hour), setting this to
