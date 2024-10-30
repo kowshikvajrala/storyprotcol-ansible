@@ -3,7 +3,7 @@
 
 # The version of the Story binary that created or
 # last modified the config file. Do not modify this.
-version = "v0.9.13"
+version = "{{ vars[project][type].consensus.version }}"
 
 # Story network to participate in: mainnet, testnet, or devnet.
 network = "{{ consensus_chain_id.testnet }}"
