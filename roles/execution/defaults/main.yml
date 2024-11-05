@@ -1,0 +1,19 @@
+---
+execution_home_dir: /opt/{{ service_identifier }}
+
+execution_bin_dir: "{{ execution_home_dir }}/bin"
+execution_data_dir: "{{ execution_home_dir }}/data"
+execution_jwt_secret_dir: "{{ execution_home_dir }}/jwtsecret"
+execution_log_dir: "{{ execution_home_dir }}/log"
+execution_env_dir: "{{ execution_home_dir }}/environment"
+
+execution_directories:
+  - "{{ execution_home_dir }}"
+  - "{{ execution_bin_dir }}"
+  - "{{ execution_data_dir }}"
+  - "{{ execution_jwt_secret_dir }}"
+  - "{{ execution_log_dir }}"
+  - "{{ execution_env_dir }}"
+
+execution_log_file_path: "{{ execution_log_dir }}/{{ service_identifier }}.log"
+execution_jwt_secret_path: "{{ execution_jwt_secret_dir }}/{{ execution_jwt_secret_file_name }}"
