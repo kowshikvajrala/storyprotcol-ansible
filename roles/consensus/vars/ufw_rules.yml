@@ -1,0 +1,7 @@
+---
+consensus_ufw_rules:
+  - port: "{{ p2p_port }}"
+    proto: tcp
+    rule: allow
+    from: any
+    comment: storyprotocol_consensus_client_p2p_port

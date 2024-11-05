@@ -1,0 +1,7 @@
+---
+execution_ufw_rules:
+  - port: "{{ execution_p2p_port }}"
+    proto: tcp
+    rule: allow
+    from: any
+    comment: storyprotocol_execution_client_p2p_port
