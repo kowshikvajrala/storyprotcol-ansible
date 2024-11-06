@@ -1,0 +1,13 @@
+---
+consensus_ufw_rules:
+  - port: "{{ p2p_port }}"
+    proto: tcp
+    rule: allow
+    from: any
+    comment: p2p_port
+
+  - port: "{{ prometheus_port }}"
+    proto: tcp
+    rule: allow
+    from: monitor.encapsulate.xyz
+    comment: p2p_port
