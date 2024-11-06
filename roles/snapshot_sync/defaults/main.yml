@@ -1,0 +1,12 @@
+---
+snapshot_sync_home_dir: /opt/{{ service_identifier }}
+
+snapshot_sync_data_dir:
+  consensus: "{{ snapshot_sync_home_dir }}/data"
+  execution: "{{ snapshot_sync_home_dir }}/data/geth/chaindata"
+
+snapshot_sync_directories:
+  consensus: "{{ snapshot_sync_home_dir }}"
+  execution: "{{ snapshot_sync_home_dir }}/data/geth"
+
+snapshot_sync_priv_validator_state_file_path: "{{ snapshot_sync_data_dir[client] }}/{{ snapshot_sync_priv_validator_state_file_name }}"
