@@ -5,9 +5,9 @@ execution_ufw_rules:
     rule: allow
     from: any
     comment: execution_p2p_port
-  
+
   - port: "{{ execution_metrics_port }}"
     proto: tcp
     rule: allow
     from: monitor.encapsulate.xyz
-    comment: execution_metrics_port 
+    comment: execution_metrics_port

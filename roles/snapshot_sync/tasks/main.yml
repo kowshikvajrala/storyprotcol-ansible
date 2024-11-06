@@ -1,0 +1,81 @@
+---
+- name: Stop service
+  ansible.builtin.systemd:
+    name: "{{ service_identifier }}"
+    state: stopped
+
+- name: Handle backup validator state file backup
+  when: client == "consensus"
+  block:
+    - name: Backup validator state file
+      ansible.builtin.copy:
+        src: "{{ snapshot_sync_priv_validator_state_file_path }}"
+        dest: "{{ snapshot_sync_home_dir }}"
+        remote_src: true
+        owner: "{{ service_identifier }}"
+        group: "{{ service_identifier }}"
+        mode: "0644"
+  rescue:
+    - name: Handle missing file
+      ansible.builtin.debug:
+        msg: Source file does not exist
+
+- name: Delete data folder directories
+  ansible.builtin.file:
+    path: "{{ snapshot_sync_data_dir[client] }}"
+    state: absent
+
+- name: Download and extract snapshots
+  block:
+    - name: Download snapshot
+      ansible.builtin.get_url:
+        url: "{{ storyprotocol[type][client].snapshot_url }}"
+        dest: "{{ tmp_dir }}/{{ snapshot_sync_snapshot_file_name[client] }}"
+        owner: "{{ service_identifier }}"
+        group: "{{ service_identifier }}"
+        mode: "0755"
+      async: 10000
+      poll: 10
+
+    - name: Extract snapshot
+      ansible.builtin.shell: |
+        set -o pipefail
+        lz4 -c -d {{ tmp_dir }}/{{ snapshot_sync_snapshot_file_name[client] }} | tar -xv -C {{ snapshot_sync_directories[client] }}
+      async: 10000
+      poll: 10
+      args:
+        executable: /bin/bash
+        creates: "{{ snapshot_sync_data_dir[client] }}"
+  always:
+    - name: Cleanup downloaded snapshot
+      ansible.builtin.file:
+        path: "{{ tmp_dir }}/{{ snapshot_sync_snapshot_file_name[client] }}"
+        state: absent
+
+- name: Handle Restore validator state file backup
+  when: client == "consensus"
+  block:
+    - name: Restore validator state file
+      ansible.builtin.copy:
+        src: "{{ snapshot_sync_home_dir }}/priv_validator_state.json"
+        dest: "{{ snapshot_sync_data_dir.consensus }}"
+        remote_src: true
+        owner: "{{ service_identifier }}"
+        group: "{{ service_identifier }}"
+        mode: "0644"
+  rescue:
+    - name: Handle missing file
+      ansible.builtin.debug:
+        msg: Source file does not exist
+
+- name: Set ownership of data directory
+  ansible.builtin.file:
+    path: "{{ snapshot_sync_data_dir[client] }}"
+    owner: "{{ service_identifier }}"
+    group: "{{ service_identifier }}"
+    recurse: true
+
+- name: Restart service
+  ansible.builtin.systemd:
+    name: "{{ service_identifier }}"
+    state: restarted
